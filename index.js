@@ -3,12 +3,31 @@
 const http = require('http');
 const server = http.createServer((req, res) =>
 {
-    console.info(`[${new Date()}] Requested by ${req.connection.remoteAddress}`);
+    const now = new Date();
+    console.info(`[${now}] Requested by ${req.connection.remoteAddress}`);
     res.writeHead(200,
     {
         'Content-Type': 'text/plain; charset=utf8'
     });
-    res.write(req.headers['user-agent']);
+    switch(req.method)
+    {
+        case 'GET':
+            res.write(`GET ${req.url}`);
+            break;
+        case 'POST':
+            res.write(`POST ${req.url}`);
+            let body = '';
+            req.on('data', (chunk)=>
+            {
+                body += chunk;
+            }).on('end', ()=>
+            {
+                console.log(`[${now}] Data posted ${body}`);
+            });
+            break;
+        default:
+            break;
+    }
     res.end();
 })
 .on('error', (e) => 
