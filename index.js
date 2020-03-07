@@ -7,28 +7,31 @@ const server = http.createServer((req, res) =>
     console.info(`[${now}] Requested by ${req.connection.remoteAddress}`);
     res.writeHead(200,
     {
-        'Content-Type': 'text/plain; charset=utf8'
+        'Content-Type': 'text/html; charset=utf8'
     });
     switch(req.method)
     {
         case 'GET':
-            res.write(`GET ${req.url}`);
+            const fs = require('fs');
+            const rs = fs.createReadStream('./form.html');
+            rs.pipe(res);
             break;
         case 'POST':
-            res.write(`POST ${req.url}`);
             let body = '';
             req.on('data', (chunk)=>
             {
                 body += chunk;
             }).on('end', ()=>
             {
-                console.log(`[${now}] Data posted ${body}`);
+                const decoded = decodeURIComponent(body);
+                console.info(`[${now}] 投稿： ${decoded}`);
+                res.write(`<h1>${decoded}が登録されました</h1>`)
+                res.end();
             });
             break;
         default:
             break;
     }
-    res.end();
 })
 .on('error', (e) => 
 {
