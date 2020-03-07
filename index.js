@@ -61,7 +61,7 @@ const server = http.createServer((req, res) =>
     console.error(`[${new Date()}] Client Error`, e);
 });
 
-const port = 30000;
+const port = process.env.PORT || 30000;
 server.listen(port, ()=> 
 {
     console.log(`ポート${port}番でサーバーを起動しました`)
